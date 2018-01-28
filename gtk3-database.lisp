@@ -15,10 +15,11 @@
 
 (in-package :cl-gtk3db-app)
 
-(defvar *connection* (connect :postgres
-                              :database-name "test"
-                              :username "nobody"
-                              :password "1234"))
+(defun db-connect (db-name usr-name db-pass)
+  (connect :postgres
+           :database-name db-name
+           :username usr-name
+           :password db-pass))
 
 (defun get-types (data)
   (let ((type-list '()))
@@ -44,8 +45,8 @@
       (gtk-list-store-set-value model iter n (nth n data-list)))))
 
 ;; Query
-(defun exe-query ()
-  (let* ((query  (prepare *connection* "SELECT * FROM hello"))
+(defun exe-query (con sql)
+  (let* ((query  (prepare con sql))
          (result (execute query))
          head-list data-list
          (flg 0)
@@ -81,8 +82,7 @@
                                  :border-width 12
                                  :default-width 300
                                  :default-height 200))
-         ;; (view (create-view-and-model)))
-          (view (exe-query)))
+          (view (exe-query (db-connect "test" "nobody" "1234") "SELECT * FROM hello")))
       (g-signal-connect window "destroy"
                         (lambda (widget)
                           (declare (ignore widget))
