@@ -38,11 +38,10 @@
       (gtk-tree-view-append-column view column))))
 
 (defun set-data (model data-list)
-  (let ((len (length data-list)))
-    (cond ((= len 1)
-           (gtk-list-store-set model (gtk-list-store-append model) (nth 0 data-list)))
-          ((= len 2)
-           (gtk-list-store-set model (gtk-list-store-append model) (nth 0 data-list) (nth 1 data-list))))))
+  (let ((iter (gtk-list-store-append model))
+        (len (length data-list)))
+    (dotimes (n len)
+      (gtk-list-store-set-value model iter n (nth n data-list)))))
 
 ;; Query
 (defun exe-query ()
